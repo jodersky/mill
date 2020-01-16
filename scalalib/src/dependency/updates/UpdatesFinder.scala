@@ -42,7 +42,7 @@ private[dependency] object UpdatesFinder {
       dependencyVersions.dependencies.map { dependencyVersion =>
         findUpdates(dependencyVersion, allowPreRelease)
       }
-    ModuleDependenciesUpdates(dependencyVersions.module, dependencies)
+    ModuleDependenciesUpdates(dependencyVersions.modulePath, dependencies)
   }
 
   def findUpdates(dependencyVersion: DependencyVersions,
@@ -54,7 +54,7 @@ private[dependency] object UpdatesFinder {
       .filter(isUpdate(current))
       .filterNot(lessStable(current, allowPreRelease))
 
-    DependencyUpdates(dependencyVersion.dependency,
+    DependencyUpdates(dependencyVersion.dependencyName,
                       dependencyVersion.currentVersion,
                       updates)
   }

@@ -49,10 +49,10 @@ private[dependency] object VersionsFinder {
             metadataLoaders
               .flatMap(_.getVersions(dependency.module))
               .toSet
-          DependencyVersions(dependency, currentVersion, allVersions)
+          DependencyVersions(dependency.module.toString, currentVersion, allVersions)
         }
 
-        ModuleDependenciesVersions(javaModule, versions)
+        ModuleDependenciesVersions(javaModule.toString, versions)
     }
 
   private def eval[T](evaluator: Evaluator, e: Task[T]): T =

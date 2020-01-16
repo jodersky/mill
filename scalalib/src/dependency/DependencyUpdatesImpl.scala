@@ -29,7 +29,7 @@ object DependencyUpdatesImpl {
 
   private def showAllUpdates(updates: Seq[ModuleDependenciesUpdates]): Unit =
     updates.foreach { dependencyUpdates =>
-      val module = dependencyUpdates.module.toString
+      val module = dependencyUpdates.modulePath
       val actualUpdates =
         dependencyUpdates.dependencies.filter(_.updates.nonEmpty)
       if (actualUpdates.isEmpty) {
@@ -42,7 +42,7 @@ object DependencyUpdatesImpl {
 
   private def showUpdates(updates: Seq[DependencyUpdates]): Unit =
     updates.foreach { dependencyUpdate =>
-      val module = s"${dependencyUpdate.dependency.module}"
+      val module = dependencyUpdate.dependencyName
       val allVersions =
         (dependencyUpdate.currentVersion +: dependencyUpdate.updates.toList)
           .mkString(" -> ")

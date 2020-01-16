@@ -3,10 +3,10 @@ package mill.scalalib.dependency.versions
 import mill.scalalib.JavaModule
 
 private[dependency] final case class ModuleDependenciesVersions(
-    module: JavaModule,
+    modulePath: String,
     dependencies: Seq[DependencyVersions])
 
 private[dependency] final case class DependencyVersions(
-    dependency: coursier.Dependency,
+    dependencyName: String,
     currentVersion: Version,
     allversions: Set[Version])
