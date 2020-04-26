@@ -94,6 +94,14 @@ trait ScalaModule extends JavaModule { outer =>
     resolveDeps(scalacPluginIvyDeps)()
   }
 
+  def scalaDocClasspath: T[Agg[PathRef]] = T {
+    resolveDeps(
+      T.task{
+        scalaDocIvyDeps(scalaOrganization(), scalaVersion())
+      }
+    )()
+  }
+
   /**
     * The ivy coordinates of Scala's own standard library
     */
@@ -165,7 +173,7 @@ trait ScalaModule extends JavaModule { outer =>
       zincWorker.worker().docJar(
         scalaVersion(),
         scalaOrganization(),
-        scalaCompilerClasspath().map(_.path),
+        scalaDocClasspath().map(_.path),
         scalacPluginClasspath().map(_.path),
         files ++ options
       ) match{

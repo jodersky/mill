@@ -78,6 +78,15 @@ object Lib{
         ivy"$scalaOrganization:scala-reflect:$scalaVersion".forceVersion()
       )
 
+  def scalaDocIvyDeps(scalaOrganization: String, scalaVersion: String) =
+    if (mill.scalalib.api.Util.isDotty(scalaVersion))
+      Agg(
+        ivy"$scalaOrganization::dotty-doc:$scalaVersion".forceVersion(),
+        ivy"$scalaOrganization:scala-library:$scalaVersion".forceVersion()
+      )
+    else
+      scalaCompilerIvyDeps(scalaOrganization, scalaVersion) // the scaladoc in Scala <= 2.13 is included in the compiler
+
   def scalaRuntimeIvyDeps(scalaOrganization: String, scalaVersion: String) = Agg[Dep](
     ivy"$scalaOrganization:scala-library:$scalaVersion".forceVersion()
   )
