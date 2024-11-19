@@ -5,10 +5,20 @@ import mill.api.Result
 import mill.util.Util
 import mill.util.Jvm
 
-trait PythonModule extends Module with TaskModule {
+trait PythonModule extends Module with TaskModule { outer =>
+  trait PythonTests extends TestModule {
+    override def moduleDeps = Seq(outer)
+    override def sources = Task.Sources {
+      for (src <- outer.sources()) yield {
+        PathRef(this.millSourcePath / src.path.relativeTo(outer.millSourcePath))
+      }
+    }
+  }
+
+
   def moduleDeps: Seq[PythonModule] = Nil
   def mainFileName: T[String] = Task { "main.py" }
-  def sources: T[PathRef] = Task.Source(millSourcePath / "src")
+  def sources: T[Seq[PathRef]] = Task.Sources(millSourcePath / "src")
 
   def pythonDeps: T[Seq[String]] = Task { Seq.empty[String] }
 
@@ -29,13 +39,13 @@ trait PythonModule extends Module with TaskModule {
     Task.traverse(moduleDeps)(_.typeCheck)()
 
     os.call(
-      (pythonExe().path, "-m", "mypy", "--strict", sources().path),
+      (pythonExe().path, "-m", "mypy", "--strict", sources().map(_.path)),
       stdout = os.Inherit,
       cwd = T.workspace
     )
   }
 
-  def gatherScripts(upstream: Seq[(PathRef, PythonModule)]) = {
+  def gatherScripts(upstream: Seq[(Seq[PathRef], PythonModule)]) = {
     for ((sourcesFolder, mod) <- upstream) {
       val destinationPath =
         os.pwd / mod.millSourcePath.subRelativeTo(mill.api.WorkspaceRoot.workspaceRoot)
